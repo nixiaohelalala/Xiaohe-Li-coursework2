@@ -1,4 +1,4 @@
-%Xiaohe Li
+%Xiaohe Li_20514138.m
 %ssyxl24@nottingham.edu.cn
 
 %%PRELIMINARY TASK - ARDUINO AND GIT INSTALLATION
@@ -28,57 +28,76 @@ timeInterval = 1; % Time interval to read data from sensor in seconds
 numReadings = duration / timeInterval; % Number of readings to take
 voltageData = zeros(1, duration);
 
-% collect data
-for i = 1:duration
-    voltageData(i) = analogRead(a, sensorPin);
-    pause(1); % wait for 1 second
+a=arduino();duration=600;
+temperature_data=zeros(duration,1);
+TC=10
+V_0c=0.5
+for i=1:duration
+A0 voltage=readVoltage(a,'A');
+temperature=(A0_voltage-V_0c)*1000/TC;
+temperature_data(i)=temperature;
+pause(0.5);
 end
 
-% Convert voltage values to temperature values (formula needs to be adjusted according to sensor characteristics)
-% Assume that V0°C is the voltage at 25°C and TC is the temperature coefficient
-V0°C = 0.750; % assumed value
-TC = 10; % The assumed value, the voltage change per degree Celsius
-temperatureData = (voltageData / 1023 * 5 - V0°C) / TC;
+% collect data
+for i = 1:duration
+    A0 voltage=readVoltage(a,'A');
+    temperature=(A0_voltage-V_0c)*1000/TC;
+    temperature_data(i)=temperature;
+    pause(0.5); % wait for 0.5second
+end
 
+% Calculate and write statistics
+minTemp = min(temperature_Data);
+maxTemp = max(temperature_Data);
+avgTemp = mean(temperature_Data);
+
+%temperature/time plot
 time = 0:duration-1;
-plot(time, temperatureData);
+plot(time, temperature_Data);
 xlabel('Time (seconds)');
 ylabel('Temperature (°C)');
 title('Cabin Temperature Over Time');
 
 % Format the output to the screen
-for i = 1:duration
-    fprintf('Minute %d: Temperature %.2f °C\n', i, temperatureData(i));
+disp('Data logging initiated-30/5/2024');
+disp('Location-Nottingham');
+disp('');
+zero=sprintf('Minutet0snTemperaturet0')
+    disp(zero);
+
+    for minute=1:(duration/60)
+a=sprintf('Minutet %d s',minute);
+b=sprintf('Temperaturelt\n%.2fC',temperature_data(minute*60));
+disp(a);
+disp(b);
 end
 
-% open the file ready to write
-fileID = fopen('cabin_temperature.txt', 'w');
+maxTemp=sprintf('Maxtemp\t%.2f ',maxTemp);
+minTemp=sprintf('Min temp\t %.2f c',minTemp);
+avgTemp=sprintf('Average temp\t%.2f c',avgTemp);
+disp(maxTemp);
+disp(minTemp);
+disp(avgTemp);
+disp('');
+disp('Data logging terminated');
 
-% write down statics
-for i = 1:duration
-    fprintf(fileID, 'Minute %d: Temperature %.2f °C\n', i, temperatureData(i));
+%fprintf
+fileId=fopen('cabin temperature.txt','W');
+fprintf(fileId,'Data logging initiated-30/5/2024');
+fprintf(fileId,'Location-Nottingham\n');
+for i=1:duration(data)
+    fprintf(fileId,'Minute %d\nTemperature %.2f cn\n',i-1, data(i));
 end
-
-% Calculate and write statistics
-minTemp = min(temperatureData);
-maxTemp = max(temperatureData);
-avgTemp = mean(temperatureData);
-fprintf(fileID, 'Max temp %.2f C\nMin temp %.2f C\nAverage temp %.2f C\n', maxTemp, minTemp, avgTemp);
+fprintf(fileid,'Max temp %.2f CinMin temp %.2f c\nAverage temp %.2f c\n',maxTemp, minTemp, avgTemp)
+fprintf(fielId,'Data logging terminated\n');
+fclose(fileId);
+clear
 
 % close the file
 fclose(fileID);
 
 %%TASK 2 - LED TEMPERATURE MONITORING DEVICE IMPLEMENTATION
-
-% The LED is connected to the Arduino's digital channel
-greenLEDPin = 'D2';
-yellowLEDPin = 'D3';
-redLEDPin = 'D4';
-
-% Turn all LEDs off at the beginning
-writeDigitalPin(a, ['a' num2str(greenLEDPin)], 0);
-writeDigitalPin(a, ['a' num2str(yellowLEDPin)], 0);
-writeDigitalPin(a, ['a' num2str(redLEDPin)], 0);
 
 function temp_monitor(a, greenLEDPin, yellowLEDPin, redLEDPin)
     %Continuous temperature monitoring
@@ -150,8 +169,8 @@ end
 
 %%TASK5
 
-% initialize Arduino
 a = Arduino('COM3', 'UNO');
+% initialize Arduino
 
 % Placeholder for the actual temperature reading function
 % You should replace this with the actual code that reads the sensor
